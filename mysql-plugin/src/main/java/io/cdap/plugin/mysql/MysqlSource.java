@@ -84,6 +84,11 @@ public class MysqlSource extends AbstractDBSource<MysqlSource.MysqlSourceConfig>
     return new MysqlSchemaReader(null, mysqlSourceConfig.getConnectionArguments());
   }
 
+  @Override
+  protected String getErrorDetailsProviderClassName() {
+    return MysqlErrorDetailsProvider.class.getName();
+  }
+
   /**
    * MySQL source config.
    */

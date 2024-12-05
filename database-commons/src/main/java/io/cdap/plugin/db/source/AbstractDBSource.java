@@ -25,6 +25,9 @@ import io.cdap.cdap.api.data.batch.Input;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.cdap.api.dataset.lib.KeyValue;
+import io.cdap.cdap.api.exception.ErrorCategory;
+import io.cdap.cdap.api.exception.ErrorType;
+import io.cdap.cdap.api.exception.ErrorUtils;
 import io.cdap.cdap.api.plugin.PluginConfig;
 import io.cdap.cdap.etl.api.Emitter;
 import io.cdap.cdap.etl.api.FailureCollector;
@@ -32,6 +35,7 @@ import io.cdap.cdap.etl.api.PipelineConfigurer;
 import io.cdap.cdap.etl.api.StageConfigurer;
 import io.cdap.cdap.etl.api.batch.BatchRuntimeContext;
 import io.cdap.cdap.etl.api.batch.BatchSourceContext;
+import io.cdap.cdap.etl.api.exception.ErrorDetailsProviderSpec;
 import io.cdap.cdap.internal.io.SchemaTypeAdapter;
 import io.cdap.plugin.common.LineageRecorder;
 import io.cdap.plugin.common.ReferenceBatchSource;
@@ -41,6 +45,7 @@ import io.cdap.plugin.db.CommonSchemaReader;
 import io.cdap.plugin.db.ConnectionConfig;
 import io.cdap.plugin.db.ConnectionConfigAccessor;
 import io.cdap.plugin.db.DBConfig;
+import io.cdap.plugin.db.DBErrorDetailsProvider;
 import io.cdap.plugin.db.DBRecord;
 import io.cdap.plugin.db.SchemaReader;
 import io.cdap.plugin.db.TransactionIsolationLevel;
@@ -119,8 +124,9 @@ public abstract class AbstractDBSource<T extends PluginConfig & DatabaseSourceCo
         collector.addFailure("Unable to instantiate JDBC driver: " + e.getMessage(), null)
           .withStacktrace(e.getStackTrace());
       } catch (SQLException e) {
-        collector.addFailure("SQL error while getting query schema: " + e.getMessage(), null)
-          .withStacktrace(e.getStackTrace());
+        String details = String.format("SQL error while getting query schema: Error: %s, SQLState: %s, ErrorCode: %s",
+          e.getMessage(), e.getSQLState(), e.getErrorCode());
+        collector.addFailure(details, null).withStacktrace(e.getStackTrace());
       } catch (Exception e) {
         collector.addFailure(e.getMessage(), null).withStacktrace(e.getStackTrace());
       }
@@ -194,7 +200,11 @@ public abstract class AbstractDBSource<T extends PluginConfig & DatabaseSourceCo
 
     } catch (SQLException e) {
       // wrap exception to ensure SQLException-child instances not exposed to contexts without jdbc driver in classpath
-      throw new SQLException(e.getMessage(), e.getSQLState(), e.getErrorCode());
+      String errorMessageWithDetails = String.format("Error occurred while trying to get schema from database." +
+        "Error message: '%s'. Error code: '%s'. SQLState: '%s'", e.getMessage(), e.getErrorCode(), e.getSQLState());
+      throw ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
+        e.getMessage(), errorMessageWithDetails, ErrorType.USER, false, new SQLException(e.getMessage(),
+          e.getSQLState(), e.getErrorCode()));
     } finally {
       driverCleanup.destroy();
     }
@@ -210,6 +220,16 @@ public abstract class AbstractDBSource<T extends PluginConfig & DatabaseSourceCo
 
   protected SchemaReader getSchemaReader() {
     return new CommonSchemaReader();
+  }
+
+  /**
+   * Returns the ErrorDetailsProvider class name.
+   * Override this method to provide a custom ErrorDetailsProvider class name.
+   *
+   * @return ErrorDetailsProvider class name
+   */
+  protected String getErrorDetailsProviderClassName() {
+    return DBErrorDetailsProvider.class.getName();
   }
 
   private DriverCleanup loadPluginClassAndGetDriver(Class<? extends Driver> driverClass)
@@ -268,6 +288,8 @@ public abstract class AbstractDBSource<T extends PluginConfig & DatabaseSourceCo
       lineageRecorder.recordRead("Read", "Read from database plugin",
                                  schema.getFields().stream().map(Schema.Field::getName).collect(Collectors.toList()));
     }
+    // set error details provider
+    context.setErrorDetailsProvider(new ErrorDetailsProviderSpec(getErrorDetailsProviderClassName()));
     context.setInput(Input.of(sourceConfig.getReferenceName(), new SourceInputFormatProvider(
       DataDrivenETLDBInputFormat.class, connectionConfigAccessor.getConfiguration())));
   }

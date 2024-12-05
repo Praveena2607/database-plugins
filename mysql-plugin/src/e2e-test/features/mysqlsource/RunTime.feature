@@ -143,6 +143,7 @@ Feature: MySQL Source - Run time scenarios
     Then Save the pipeline
     Then Preview and run the pipeline
     Then Wait till pipeline preview is in running state
+    Then Open and capture pipeline preview logs
     Then Verify the preview run status of pipeline in the logs is "failed"
 
   @MYSQL_SOURCE_TEST @MYSQL_TARGET_TEST @Mysql_Required

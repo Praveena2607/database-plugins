@@ -201,7 +201,9 @@ Feature: MySQL Source - Run time scenarios (macro)
     And Enter runtime argument value "invalid.query" for key "importQuery"
     And Run the Pipeline in Runtime with runtime arguments
     And Wait till pipeline is in running state
+    And Open and capture logs
     And Verify the pipeline status is "Failed"
+    And Close the pipeline logs
 
   @MYSQL_SOURCE_TEST @MYSQL_TARGET_TEST @Mysql_Required
   Scenario: Verify that pipeline fails when user provides invalid Credentials for connection with Macros
@@ -241,4 +243,6 @@ Feature: MySQL Source - Run time scenarios (macro)
     And Enter runtime argument value "invalid.password" for key "Password"
     And Run the Pipeline in Runtime with runtime arguments
     And Wait till pipeline is in running state
+    And Open and capture logs
     And Verify the pipeline status is "Failed"
+    And Close the pipeline logs

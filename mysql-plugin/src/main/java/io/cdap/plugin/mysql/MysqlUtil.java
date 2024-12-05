@@ -17,6 +17,9 @@
 package io.cdap.plugin.mysql;
 
 import com.google.common.collect.ImmutableMap;
+import io.cdap.cdap.api.exception.ErrorCategory;
+import io.cdap.cdap.api.exception.ErrorType;
+import io.cdap.cdap.api.exception.ErrorUtils;
 
 import java.sql.Types;
 import java.util.Map;
@@ -26,7 +29,9 @@ import java.util.Map;
  */
 public final class MysqlUtil {
   private MysqlUtil() {
-    throw new AssertionError("Should not instantiate static utility class.");
+    String errorMessage = "Should not instantiate static utility class.";
+    throw ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
+      errorMessage, errorMessage, ErrorType.SYSTEM, false, new AssertionError(errorMessage));
   }
 
   /**

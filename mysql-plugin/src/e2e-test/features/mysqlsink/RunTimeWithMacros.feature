@@ -100,6 +100,7 @@ Feature: MySQL Sink - Run time scenarios (macro)
     Then Wait till pipeline is in running state
     Then Open and capture logs
     And Verify the pipeline status is "Failed"
+    And Close the pipeline logs
 
   @BQ_SOURCE_TEST @MYSQL_TARGET_TABLE @Mysql_Required
   Scenario: Verify that the pipeline fails when user provides invalid Credentials for connection with Macros
@@ -135,4 +136,6 @@ Feature: MySQL Sink - Run time scenarios (macro)
     And Enter runtime argument value "invalid.password" for key "password"
     And Run the Pipeline in Runtime with runtime arguments
     And Wait till pipeline is in running state
+    And Open and capture logs
     And Verify the pipeline status is "Failed"
+    And Close the pipeline logs

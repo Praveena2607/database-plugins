@@ -109,6 +109,11 @@ public class MysqlSink extends AbstractDBSink<MysqlSink.MysqlSinkConfig> {
     return dbColumns;
   }
 
+  @Override
+  protected String getErrorDetailsProviderClassName() {
+    return MysqlErrorDetailsProvider.class.getName();
+  }
+
   /**
    * MySQL action configuration.
    */

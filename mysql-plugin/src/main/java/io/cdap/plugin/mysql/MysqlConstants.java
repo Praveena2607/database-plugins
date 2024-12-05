@@ -16,12 +16,18 @@
 
 package io.cdap.plugin.mysql;
 
+import io.cdap.cdap.api.exception.ErrorCategory;
+import io.cdap.cdap.api.exception.ErrorType;
+import io.cdap.cdap.api.exception.ErrorUtils;
+
 /**
  * MySQL Constants.
  */
 public final class MysqlConstants {
   private MysqlConstants() {
-    throw new AssertionError("Should not instantiate static utility class.");
+    String errorMessage = "Should not instantiate static utility class.";
+    throw ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
+      errorMessage, errorMessage, ErrorType.SYSTEM, false, new AssertionError(errorMessage));
   }
 
   public static final String PLUGIN_NAME = "Mysql";
