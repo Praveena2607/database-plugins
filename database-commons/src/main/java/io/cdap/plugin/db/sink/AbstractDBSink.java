@@ -32,6 +32,7 @@ import io.cdap.cdap.etl.api.PipelineConfigurer;
 import io.cdap.cdap.etl.api.StageConfigurer;
 import io.cdap.cdap.etl.api.batch.BatchRuntimeContext;
 import io.cdap.cdap.etl.api.batch.BatchSinkContext;
+import io.cdap.cdap.etl.api.exception.ErrorDetailsProviderSpec;
 import io.cdap.cdap.etl.api.validation.InvalidStageException;
 import io.cdap.plugin.common.LineageRecorder;
 import io.cdap.plugin.common.ReferenceBatchSink;
@@ -42,6 +43,7 @@ import io.cdap.plugin.db.CommonSchemaReader;
 import io.cdap.plugin.db.ConnectionConfig;
 import io.cdap.plugin.db.ConnectionConfigAccessor;
 import io.cdap.plugin.db.DBConfig;
+import io.cdap.plugin.db.DBErrorDetailsProvider;
 import io.cdap.plugin.db.DBRecord;
 import io.cdap.plugin.db.Operation;
 import io.cdap.plugin.db.SchemaReader;
@@ -163,6 +165,16 @@ public abstract class AbstractDBSink<T extends PluginConfig & DatabaseSinkConfig
     }
   }
 
+  /**
+   * Returns the ErrorDetailsProvider class name.
+   * Override this method to provide a custom ErrorDetailsProvider class name.
+   *
+   * @return ErrorDetailsProvider class name
+   */
+  protected String getErrorDetailsProviderClassName() {
+    return DBErrorDetailsProvider.class.getName();
+  }
+
   @Override
   public void prepareRun(BatchSinkContext context) {
     String connectionString = dbSinkConfig.getConnectionString();
@@ -227,7 +239,8 @@ public abstract class AbstractDBSink<T extends PluginConfig & DatabaseSinkConfig
       configuration.set(ETLDBOutputFormat.COMMIT_BATCH_SIZE,
                         context.getArguments().get(ETLDBOutputFormat.COMMIT_BATCH_SIZE));
     }
-
+    // set error details provider
+    context.setErrorDetailsProvider(new ErrorDetailsProviderSpec(getErrorDetailsProviderClassName()));
     addOutputContext(context);
   }
   protected void addOutputContext(BatchSinkContext context) {

@@ -21,6 +21,9 @@ import com.google.common.base.Strings;
 import io.cdap.cdap.api.common.Bytes;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.exception.ErrorCategory;
+import io.cdap.cdap.api.exception.ErrorType;
+import io.cdap.cdap.api.exception.ErrorUtils;
 import io.cdap.plugin.util.DBUtils;
 import io.cdap.plugin.util.Lazy;
 import org.apache.hadoop.conf.Configurable;
@@ -305,7 +308,10 @@ public class DBRecord implements Writable, DBWritable, Configurable {
    * @throws SQLException
    */
   protected void upsertOperation(PreparedStatement stmt) throws SQLException {
-    throw new UnsupportedOperationException();
+    String errorMessage = "Upsert operation is not supported for this plugin.";
+    throw ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
+      errorMessage, errorMessage, ErrorType.SYSTEM, false, new UnsupportedOperationException(errorMessage));
+
   }
 
   private boolean fillUpdateParams(List<String> updatedKeyList, ColumnType columnType) {
@@ -366,7 +372,9 @@ public class DBRecord implements Writable, DBWritable, Configurable {
         out.write((byte[]) fieldValue);
         break;
       default:
-        throw new IOException(String.format("Unsupported datatype: %s with value: %s.", fieldType, fieldValue));
+        String errorMessage = String.format("Unsupported datatype: %s with value: %s.", fieldType, fieldValue);
+        throw  ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
+          errorMessage, errorMessage, ErrorType.USER, false, new IOException(errorMessage));
     }
   }
 
