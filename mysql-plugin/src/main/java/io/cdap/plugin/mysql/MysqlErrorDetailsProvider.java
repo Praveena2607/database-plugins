@@ -18,6 +18,7 @@ package io.cdap.plugin.mysql;
 
 import io.cdap.cdap.api.exception.ErrorType;
 import io.cdap.plugin.db.DBErrorDetailsProvider;
+import io.cdap.plugin.util.DBUtils;
 
 /**
  * A custom ErrorDetailsProvider for MySQL plugins.
@@ -26,7 +27,7 @@ public class MysqlErrorDetailsProvider extends DBErrorDetailsProvider {
 
   @Override
   protected String getExternalDocumentationLink() {
-    return "https://dev.mysql.com/doc/mysql-errors/9.0/en/";
+    return DBUtils.MYSQL_SUPPORTED_DOC_URL;
   }
 
   @Override

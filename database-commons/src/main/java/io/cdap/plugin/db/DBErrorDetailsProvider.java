@@ -19,11 +19,13 @@ package io.cdap.plugin.db;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import io.cdap.cdap.api.exception.ErrorCategory;
+import io.cdap.cdap.api.exception.ErrorCodeType;
 import io.cdap.cdap.api.exception.ErrorType;
 import io.cdap.cdap.api.exception.ErrorUtils;
 import io.cdap.cdap.api.exception.ProgramFailureException;
 import io.cdap.cdap.etl.api.exception.ErrorContext;
 import io.cdap.cdap.etl.api.exception.ErrorDetailsProvider;
+import io.cdap.plugin.util.DBUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -76,7 +78,8 @@ public class DBErrorDetailsProvider implements ErrorDetailsProvider {
         externalDocumentationLink);
     }
     return ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
-      errorMessage, errorMessageWithDetails, getErrorTypeFromErrorCode(errorCode), false, e);
+      errorMessage, errorMessageWithDetails, getErrorTypeFromErrorCode(errorCode), false, ErrorCodeType.SQLSTATE,
+      sqlState, externalDocumentationLink, e);
   }
 
   /**
