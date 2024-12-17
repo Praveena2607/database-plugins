@@ -142,7 +142,9 @@ Feature: CloudMySql Sink - Run time scenarios (macro)
     Then Enter runtime argument value "invalidTablename" for key "invalidTablename"
     Then Run the Pipeline in Runtime with runtime arguments
     Then Wait till pipeline is in running state
+    And Open and capture logs
     And Verify the pipeline status is "Failed"
+    And Close the pipeline logs
     Then Open Pipeline logs and verify Log entries having below listed Level and Message:
       | Level | Message                                  |
       | ERROR | errorLogsMessageInvalidTableName         |
@@ -181,7 +183,9 @@ Feature: CloudMySql Sink - Run time scenarios (macro)
     Then Enter runtime argument value "invalidPassword" for key "Password"
     Then Run the Pipeline in Runtime with runtime arguments
     Then Wait till pipeline is in running state
+    And Open and capture logs
     And Verify the pipeline status is "Failed"
+    And Close the pipeline logs
     Then Open Pipeline logs and verify Log entries having below listed Level and Message:
       | Level | Message                                  |
       | ERROR | errorLogsMessageInvalidCredentials       |
