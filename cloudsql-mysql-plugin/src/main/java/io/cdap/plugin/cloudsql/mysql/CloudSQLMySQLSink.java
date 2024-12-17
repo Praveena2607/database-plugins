@@ -104,6 +104,11 @@ public class CloudSQLMySQLSink extends AbstractDBSink<CloudSQLMySQLSink.CloudSQL
   }
 
   @Override
+  protected String getErrorDetailsProviderClassName() {
+    return CloudSQLMySQLErrorDetailsProvider.class.getName();
+  }
+
+  @Override
   protected LineageRecorder getLineageRecorder(BatchSinkContext context) {
     String host;
     String location = "";

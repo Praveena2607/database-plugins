@@ -127,6 +127,11 @@ public class CloudSQLMySQLSource extends AbstractDBSource<CloudSQLMySQLSource.Cl
     return new MysqlSchemaReader(null, cloudsqlMysqlSourceConfig.getConnectionArguments());
   }
 
+  @Override
+  protected String getErrorDetailsProviderClassName() {
+    return CloudSQLMySQLErrorDetailsProvider.class.getName();
+  }
+
   /** CloudSQL MySQL source config. */
   public static class CloudSQLMySQLSourceConfig extends AbstractDBSpecificSourceConfig {
 
