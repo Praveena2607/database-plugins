@@ -141,3 +141,77 @@ Feature: MySQL Source - Design time validation scenarios
       | referenceName  |
       | database       |
       | importQuery    |
+
+  @Mysql_Required
+  Scenario: To verify MySQL source plugin validation error message with invalid reference test data
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "MySQL" from the plugins list as: "Source"
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "invalidRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "referenceName" is displaying an in-line error message: "invalidreferenceName.error.message"
+
+  @Mysql_Required
+  Scenario: To verify MySQL source plugin validation error message when fetch size is changed to zero
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "MySQL" from the plugins list as: "Source"
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Replace input plugin property: "fetchSize" with value: "zeroValue"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "fetchSize" is displaying an in-line error message: "errorMessageInvalidFetchSize"
+
+  @Mysql_Required
+  Scenario: To verify MySQL source plugin validation error message when number of Split value is changed to zero
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "MySQL" from the plugins list as: "Source"
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Replace input plugin property: "numSplits" with value: "zeroValue"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "numSplits" is displaying an in-line error message: "errorMessageInvalidNumberOfSplits"
+
+  @Mysql_Required
+  Scenario: To verify MySQL source plugin validation error message with blank bounding query
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "MySQL" from the plugins list as: "Source"
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "invalidImportQuery"
+    Then Replace input plugin property: "splitBy" with value: "splitBy"
+    Then Replace input plugin property: "numSplits" with value: "numberOfSplits"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "boundingQuery" is displaying an in-line error message: "boundingQuery.error.message"
+    Then Verify that the Plugin Property: "numSplits" is displaying an in-line error message: "boundingQuery.error.message"
+    Then Verify that the Plugin Property: "importQuery" is displaying an in-line error message: "errorMessageInvalidImportQuery"

@@ -17,6 +17,8 @@
 package io.cdap.plugin.common.stepsdesign;
 
 import com.google.cloud.bigquery.BigQueryException;
+import io.cdap.e2e.pages.actions.CdfConnectionActions;
+import io.cdap.e2e.pages.actions.CdfPluginPropertiesActions;
 import io.cdap.e2e.utils.BigQueryClient;
 import io.cdap.e2e.utils.PluginPropertyUtils;
 import io.cdap.plugin.MysqlClient;
@@ -47,7 +49,10 @@ public class TestSetupHooks {
     String targetTableName = String.format("TargetTable_%s", randomString);
     PluginPropertyUtils.addPluginProp("sourceTable", sourceTableName);
     PluginPropertyUtils.addPluginProp("targetTable", targetTableName);
-    PluginPropertyUtils.addPluginProp("selectQuery", String.format("select * from %s", sourceTableName));
+    PluginPropertyUtils.addPluginProp("selectQuery", String.format("select * from %s "
+        + "WHERE $CONDITIONS", sourceTableName));
+    PluginPropertyUtils.addPluginProp("boundingQuery", String.format("select MIN(id),MAX(id)"
+        + " from %s", sourceTableName));
   }
 
   @Before(order = 1)
@@ -211,6 +216,20 @@ public class TestSetupHooks {
     String connectionName = "Mysql" + RandomStringUtils.randomAlphanumeric(10);
     PluginPropertyUtils.addPluginProp("connection.name", connectionName);
     BeforeActions.scenario.write("New Connection name: " + connectionName);
+  }
+
+  private static void deleteConnection(String connectionType, String connectionName) throws IOException {
+    CdfConnectionActions.openWranglerConnectionsPage();
+    CdfConnectionActions.expandConnections(connectionType);
+    CdfConnectionActions.openConnectionActionMenu(connectionType, connectionName);
+    CdfConnectionActions.selectConnectionAction(connectionType, connectionName, "Delete");
+    CdfPluginPropertiesActions.clickPluginPropertyButton("Delete");
+  }
+
+  @After(order = 1, value = "@CONNECTION")
+  public static void deleteBQConnection() throws IOException {
+    deleteConnection("MySQL", "connection.name");
+    PluginPropertyUtils.removePluginProp("connection.name");
   }
 }
 

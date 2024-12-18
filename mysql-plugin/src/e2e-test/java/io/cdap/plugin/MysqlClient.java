@@ -138,7 +138,7 @@ public class MysqlClient {
     try (Connection connect = getMysqlConnection();
          Statement statement = connect.createStatement()) {
       String createSourceTableQuery = "CREATE TABLE IF NOT EXISTS " + sourceTable +
-        "(id int, lastName varchar(255), PRIMARY KEY (id))";
+        "(id int, lastName varchar(255), PRIMARY KEY (id), is_active BOOLEAN NOT NULL)";
       statement.executeUpdate(createSourceTableQuery);
 
       // Truncate table to clean the data of last failure run.
@@ -146,12 +146,12 @@ public class MysqlClient {
       statement.executeUpdate(truncateSourceTableQuery);
 
       // Insert dummy data.
-      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName)" +
-                                "VALUES (1, 'Simpson')");
-      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName)" +
-                                "VALUES (2, 'McBeal')");
-      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName)" +
-                                "VALUES (3, 'Flinstone')");
+      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName, is_active)" +
+                                "VALUES (1, 'Simpson', true)");
+      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName, is_active)" +
+                                "VALUES (2, 'McBeal', true)");
+      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName, is_active)" +
+                                "VALUES (3, 'Flinstone', false)");
     }
   }
 
@@ -159,7 +159,7 @@ public class MysqlClient {
     try (Connection connect = getMysqlConnection();
          Statement statement = connect.createStatement()) {
       String createTargetTableQuery = "CREATE TABLE IF NOT EXISTS " + targetTable +
-        "(id int, lastName varchar(255), PRIMARY KEY (id))";
+        "(id int, lastName varchar(255), PRIMARY KEY (id), is_active BOOLEAN NOT NULL)";
       statement.executeUpdate(createTargetTableQuery);
       // Truncate table to clean the data of last failure run.
       String truncateTargetTableQuery = "TRUNCATE TABLE " + targetTable;
