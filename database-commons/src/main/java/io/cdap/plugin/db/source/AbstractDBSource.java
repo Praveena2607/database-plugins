@@ -26,6 +26,7 @@ import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.cdap.api.dataset.lib.KeyValue;
 import io.cdap.cdap.api.exception.ErrorCategory;
+import io.cdap.cdap.api.exception.ErrorCodeType;
 import io.cdap.cdap.api.exception.ErrorType;
 import io.cdap.cdap.api.exception.ErrorUtils;
 import io.cdap.cdap.api.plugin.PluginConfig;
@@ -202,8 +203,17 @@ public abstract class AbstractDBSource<T extends PluginConfig & DatabaseSourceCo
       // wrap exception to ensure SQLException-child instances not exposed to contexts without jdbc driver in classpath
       String errorMessageWithDetails = String.format("Error occurred while trying to get schema from database." +
         "Error message: '%s'. Error code: '%s'. SQLState: '%s'", e.getMessage(), e.getErrorCode(), e.getSQLState());
+      String externalDocumentationLink = getExternalDocumentationLink();
+      if (!Strings.isNullOrEmpty(externalDocumentationLink)) {
+        if (!errorMessageWithDetails.endsWith(".")) {
+          errorMessageWithDetails = errorMessageWithDetails + ".";
+        }
+        errorMessageWithDetails = String.format("%s For more details, see %s", errorMessageWithDetails,
+          externalDocumentationLink);
+      }
       throw ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
-        e.getMessage(), errorMessageWithDetails, ErrorType.USER, false, new SQLException(e.getMessage(),
+        e.getMessage(), errorMessageWithDetails, ErrorType.USER, false, ErrorCodeType.SQLSTATE,
+        e.getSQLState(), externalDocumentationLink, new SQLException(e.getMessage(),
           e.getSQLState(), e.getErrorCode()));
     } finally {
       driverCleanup.destroy();
@@ -361,6 +371,10 @@ public abstract class AbstractDBSource<T extends PluginConfig & DatabaseSourceCo
 
   protected Class<? extends DBWritable> getDBRecordType() {
     return DBRecord.class;
+  }
+
+  protected String getExternalDocumentationLink() {
+    return null;
   }
 
   @Override

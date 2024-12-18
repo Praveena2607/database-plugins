@@ -82,6 +82,11 @@ public class CloudSQLMySQLSource extends AbstractDBSource<CloudSQLMySQLSource.Cl
   }
 
   @Override
+  protected String getExternalDocumentationLink() {
+    return DBUtils.CLOUDSQLMYSQL_SUPPORTED_DOC_URL;
+  }
+
+  @Override
   protected String createConnectionString() {
     if (CloudSQLUtil.PRIVATE_INSTANCE.equalsIgnoreCase(
         cloudsqlMysqlSourceConfig.connection.getInstanceType())) {

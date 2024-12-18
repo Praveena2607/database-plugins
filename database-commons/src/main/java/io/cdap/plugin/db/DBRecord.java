@@ -17,7 +17,6 @@
 package io.cdap.plugin.db;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import io.cdap.cdap.api.common.Bytes;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;

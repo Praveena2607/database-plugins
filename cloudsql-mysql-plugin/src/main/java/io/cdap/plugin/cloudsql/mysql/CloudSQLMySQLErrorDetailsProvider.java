@@ -18,6 +18,7 @@ package io.cdap.plugin.cloudsql.mysql;
 
 
 import io.cdap.plugin.mysql.MysqlErrorDetailsProvider;
+import io.cdap.plugin.util.DBUtils;
 
 /**
  * A custom ErrorDetailsProvider for CloudSQL MySQL plugins.
@@ -26,6 +27,6 @@ public class CloudSQLMySQLErrorDetailsProvider extends MysqlErrorDetailsProvider
 
   @Override
   protected String getExternalDocumentationLink() {
-    return "https://cloud.google.com/sql/docs/mysql/error-messages";
+    return DBUtils.CLOUDSQLMYSQL_SUPPORTED_DOC_URL;
   }
 }

@@ -69,6 +69,11 @@ public class MysqlSource extends AbstractDBSource<MysqlSource.MysqlSourceConfig>
     return MysqlDBRecord.class;
   }
 
+ @Override
+ protected String getExternalDocumentationLink() {
+    return DBUtils.MYSQL_SUPPORTED_DOC_URL;
+ }
+
   @Override
   protected LineageRecorder getLineageRecorder(BatchSourceContext context) {
     String fqn = DBUtils.constructFQN("mysql",

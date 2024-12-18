@@ -60,6 +60,8 @@ public final class DBUtils {
   private static final Logger LOG = LoggerFactory.getLogger(DBUtils.class);
 
   public static final Calendar PURE_GREGORIAN_CALENDAR = createPureGregorianCalender();
+  public static final String MYSQL_SUPPORTED_DOC_URL = "https://dev.mysql.com/doc/mysql-errors/9.0/en/";
+  public static final String CLOUDSQLMYSQL_SUPPORTED_DOC_URL = "https://cloud.google.com/sql/docs/mysql/error-messages";
 
   // Java by default uses October 15, 1582 as a Gregorian cut over date.
   // Any timestamp created with time less than this cut over date is treated as Julian date.
