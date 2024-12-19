@@ -68,8 +68,18 @@ public class PostgresSource extends AbstractDBSource<PostgresSource.PostgresSour
   }
 
   @Override
+  protected String getErrorDetailsProviderClassName() {
+    return PostgresErrorDetailsProvider.class.getName();
+  }
+
+  @Override
   protected Class<? extends DBWritable> getDBRecordType() {
     return PostgresDBRecord.class;
+  }
+
+  @Override
+  protected String getExternalDocumentationLink() {
+    return DBUtils.POSTGRES_SUPPORTED_DOC_URL;
   }
 
   @Override

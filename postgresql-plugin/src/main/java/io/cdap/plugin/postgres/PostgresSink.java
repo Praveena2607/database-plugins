@@ -116,6 +116,11 @@ public class PostgresSink extends AbstractDBSink<PostgresSink.PostgresSinkConfig
     return new LineageRecorder(context, asset);
   }
 
+  @Override
+  protected String getErrorDetailsProviderClassName() {
+    return PostgresErrorDetailsProvider.class.getName();
+  }
+
   /**
    * PostgreSQL action configuration.
    */
