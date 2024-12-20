@@ -246,3 +246,58 @@ Feature: MySQL Source - Run time scenarios (macro)
     And Open and capture logs
     And Verify the pipeline status is "Failed"
     And Close the pipeline logs
+
+  @MYSQL_SOURCE_TEST @MYSQL_TARGET_TEST
+  Scenario: To verify data is getting transferred from Mysql to Mysql successfully when connection arguments,import,bounding query are macro enabled
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "MySQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "MySQL" from the plugins list as: "Sink"
+    Then Connect plugins: "MySQL" and "MySQL2" to establish connection
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "connArgumentsSource"
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Click on the Macro button of Property: "importQuery" and set the value in textarea: "mysqlImportQuery"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Click on the Macro button of Property: "boundingQuery" and set the value in textarea: "mysqlBoundingQuery"
+    Then Click on the Get Schema button
+    Then Validate "MySQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "MySQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "connArgumentsSink"
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Validate "MySQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSink"
+    Then Enter runtime argument value "selectQuery" for key "mysqlImportQuery"
+    Then Enter runtime argument value "boundingQuery" for key "mysqlBoundingQuery"
+    And Run the preview of pipeline with runtime arguments
+    Then Verify the preview of pipeline is "success"
+    And Close the preview
+    And Deploy the pipeline
+    And Run the Pipeline in Runtime
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSink"
+    Then Enter runtime argument value "selectQuery" for key "mysqlImportQuery"
+    Then Enter runtime argument value "boundingQuery" for key "mysqlBoundingQuery"
+    And Run the Pipeline in Runtime with runtime arguments
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
