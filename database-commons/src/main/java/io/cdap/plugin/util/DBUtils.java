@@ -64,6 +64,8 @@ public final class DBUtils {
   public static final String CLOUDSQLMYSQL_SUPPORTED_DOC_URL = "https://cloud.google.com/sql/docs/mysql/error-messages";
   public static final String POSTGRES_SUPPORTED_DOC_URL =
     "https://www.postgresql.org/docs/current/errcodes-appendix.html";
+  public static final String CLOUDSQLPOSTGRES_SUPPORTED_DOC_URL =
+    "https://cloud.google.com/sql/docs/postgres/error-messages";
 
   // Java by default uses October 15, 1582 as a Gregorian cut over date.
   // Any timestamp created with time less than this cut over date is treated as Julian date.
