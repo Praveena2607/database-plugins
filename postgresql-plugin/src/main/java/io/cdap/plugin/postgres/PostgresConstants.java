@@ -16,13 +16,19 @@
 
 package io.cdap.plugin.postgres;
 
+import io.cdap.cdap.api.exception.ErrorCategory;
+import io.cdap.cdap.api.exception.ErrorType;
+import io.cdap.cdap.api.exception.ErrorUtils;
+
 /**
  * Postgres constants.
  */
 public final class PostgresConstants {
 
   private PostgresConstants() {
-    throw new AssertionError("Should not instantiate static utility class.");
+    String errorMessage = "Should not instantiate static utility class.";
+    throw ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
+      errorMessage, errorMessage, ErrorType.SYSTEM, false, new AssertionError(errorMessage));
   }
 
   public static final String PLUGIN_NAME = "Postgres";

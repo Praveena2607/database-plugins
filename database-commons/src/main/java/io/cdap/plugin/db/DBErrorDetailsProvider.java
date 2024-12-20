@@ -25,7 +25,6 @@ import io.cdap.cdap.api.exception.ErrorUtils;
 import io.cdap.cdap.api.exception.ProgramFailureException;
 import io.cdap.cdap.etl.api.exception.ErrorContext;
 import io.cdap.cdap.etl.api.exception.ErrorDetailsProvider;
-import io.cdap.plugin.util.DBUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -67,8 +66,8 @@ public class DBErrorDetailsProvider implements ErrorDetailsProvider {
     String sqlState = e.getSQLState();
     int errorCode = e.getErrorCode();
     String errorMessageWithDetails = String.format(
-      "Error occurred in the phase: '%s'. Error message: '%s'. Error code: '%s'. sqlState: '%s'",
-      errorContext.getPhase(), errorMessage, errorCode, sqlState);
+      "Error occurred in the phase: '%s' with sqlState: '%s', errorCode: '%s', errorMessage: %s",
+      errorContext.getPhase(), sqlState, errorCode, errorMessage);
     String externalDocumentationLink = getExternalDocumentationLink();
     if (!Strings.isNullOrEmpty(externalDocumentationLink)) {
       if (!errorMessageWithDetails.endsWith(".")) {
@@ -77,9 +76,10 @@ public class DBErrorDetailsProvider implements ErrorDetailsProvider {
       errorMessageWithDetails = String.format("%s For more details, see %s", errorMessageWithDetails,
         externalDocumentationLink);
     }
-    return ErrorUtils.getProgramFailureException(new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN),
-      errorMessage, errorMessageWithDetails, getErrorTypeFromErrorCode(errorCode), false, ErrorCodeType.SQLSTATE,
-      sqlState, externalDocumentationLink, e);
+    return ErrorUtils.getProgramFailureException(Strings.isNullOrEmpty(sqlState) ?
+        new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN) : getErrorCategoryFromSqlState(sqlState),
+      errorMessage, errorMessageWithDetails, getErrorTypeFromErrorCode(errorCode, sqlState), true,
+      ErrorCodeType.SQLSTATE, sqlState, externalDocumentationLink, e);
   }
 
   /**
@@ -121,7 +121,11 @@ public class DBErrorDetailsProvider implements ErrorDetailsProvider {
     return null;
   }
 
-  protected ErrorType getErrorTypeFromErrorCode(int errorCode) {
+  protected ErrorType getErrorTypeFromErrorCode(int errorCode, String sqlState) {
     return ErrorType.UNKNOWN;
+  }
+
+  protected ErrorCategory getErrorCategoryFromSqlState(String sqlState) {
+    return new ErrorCategory(ErrorCategory.ErrorCategoryEnum.PLUGIN);
   }
 }

@@ -31,7 +31,7 @@ public class MysqlErrorDetailsProvider extends DBErrorDetailsProvider {
   }
 
   @Override
-  protected ErrorType getErrorTypeFromErrorCode(int errorCode) {
+  protected ErrorType getErrorTypeFromErrorCode(int errorCode, String sqlState) {
     // https://dev.mysql.com/doc/refman/9.0/en/error-message-elements.html#error-code-ranges
     if (errorCode >= 1000 && errorCode <= 5999) {
       return ErrorType.USER;
