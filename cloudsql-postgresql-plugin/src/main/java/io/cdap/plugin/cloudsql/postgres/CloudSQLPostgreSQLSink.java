@@ -147,6 +147,11 @@ public class CloudSQLPostgreSQLSink extends AbstractDBSink<CloudSQLPostgreSQLSin
     return new LineageRecorder(context, assetBuilder.build());
   }
 
+  @Override
+  protected String getErrorDetailsProviderClassName() {
+    return CloudSQLPostgreSQLErrorDetailsProvider.class.getName();
+  }
+
   /** CloudSQL PostgreSQL sink config. */
   public static class CloudSQLPostgreSQLSinkConfig extends AbstractDBSpecificSinkConfig {
 

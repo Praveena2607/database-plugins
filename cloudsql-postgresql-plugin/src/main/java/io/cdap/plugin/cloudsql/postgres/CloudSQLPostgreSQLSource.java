@@ -87,6 +87,16 @@ public class CloudSQLPostgreSQLSource
   }
 
   @Override
+  protected String getExternalDocumentationLink() {
+    return DBUtils.CLOUDSQLPOSTGRES_SUPPORTED_DOC_URL;
+  }
+
+  @Override
+  protected String getErrorDetailsProviderClassName() {
+    return CloudSQLPostgreSQLErrorDetailsProvider.class.getName();
+  }
+
+  @Override
   protected String createConnectionString() {
     if (CloudSQLUtil.PRIVATE_INSTANCE.equalsIgnoreCase(
         cloudsqlPostgresqlSourceConfig.connection.getInstanceType())) {
